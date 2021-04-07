@@ -122,22 +122,31 @@ int angle_mapping_cmp(const void *key, const void *item) {
     float b = reinterpret_cast<const angle_mapping *>(item)->angle;
 
     if(a < b) {
-        return -1;
-    } else if(a > b) {
         return 1;
+    } else if(a > b) {
+        return -1;
     } else {
         return 0;
     }
 }
 
 bool point_allowed(point &p) {
-    float angle = p.angle();
-    //cout << "Looking for angle " << angle << endl;
+    float angle = p.angle() + 0.2;
 
-    void *result = bsearch(&angle, &angle_mappings, 64, sizeof(angle_mapping), angle_mapping_cmp);
-    //assert(result);
+    size_t item = 0;
+    for( ; item < 64; item++) {
+        if(angle > angle_mappings[item].angle) {
+            break;
+        }
+    }
 
-    return true;
+    const angle_mapping *mapping = &angle_mappings[item];
+
+    if((angle - mapping->angle) > 0.4) {
+        return false;
+    }
+
+    return mapping->keep;
 }
 
 std::vector<point> filter_points(vector<point> &input) {
@@ -153,8 +162,9 @@ std::vector<point> filter_points(vector<point> &input) {
         }
     }
 
-    cout << "Min angle is " << min_angle << endl;
-    cout << "Max angle is " << max_angle << endl;
+    //cout << "Min angle is " << min_angle << endl;
+    //cout << "Max angle is " << max_angle << endl;
+    cout << "Kept " << (100.0 * output.size() / (float) input.size()) << endl;
 
     return output;
 }
