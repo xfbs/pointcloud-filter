@@ -9,6 +9,20 @@ specific range of angles, configured in the script. This is done to allow the da
 to better match the data that can be expected from a real-world sensor that might
 not have as big a range.
 
+## Building
+
+You need a recent operating system (Ubuntu), CMake and a C++ compiler installed.
+To install these using the APT package manager (Ubuntu, Debian), run
+
+    apt install build-essential cmake
+
+Create a build folder, initialize CMake and build the code.
+
+    mkdir build
+    cd build
+    cmake ..
+    make
+
 ## License
 
 MIT.
