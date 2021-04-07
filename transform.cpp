@@ -15,6 +15,8 @@ namespace fs = std::filesystem;
 
 #define unused(x) (void)x
 
+const float angle_delta = 0.25;
+
 struct directory_pair {
     fs::path source;
     fs::path target;
@@ -38,8 +40,8 @@ float point::angle() {
 }
 
 const directory_pair directory_pairs[2] = {
-    {"testing/velodyne", "testing/velodyne_filtered2"},
-    {"training/velodyne", "training/velodyne_filtered2"},
+    {"testing/velodyne_original", "testing/velodyne_filtered2"},
+    {"training/velodyne_original", "training/velodyne_filtered2"},
 };
 
 struct angle_mapping {
@@ -131,7 +133,7 @@ int angle_mapping_cmp(const void *key, const void *item) {
 }
 
 bool point_allowed(point &p) {
-    float angle = p.angle() + 0.2;
+    float angle = p.angle() + angle_delta;
 
     size_t item = 0;
     for( ; item < 64; item++) {
@@ -142,7 +144,7 @@ bool point_allowed(point &p) {
 
     const angle_mapping *mapping = &angle_mappings[item];
 
-    if((angle - mapping->angle) > 0.4) {
+    if((angle - mapping->angle) > (2 * angle_delta)) {
         return false;
     }
 
