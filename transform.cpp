@@ -15,7 +15,7 @@ namespace fs = std::filesystem;
 
 #define unused(x) (void)x
 
-const float angle_delta = 0.25;
+const float angle_delta = 0.2;
 
 struct directory_pair {
     fs::path source;
@@ -133,18 +133,26 @@ int angle_mapping_cmp(const void *key, const void *item) {
 }
 
 bool point_allowed(point &p) {
-    float angle = p.angle() + angle_delta;
+    float angle = p.angle();
 
     size_t item = 0;
+    float error = 9999999;
     for( ; item < 64; item++) {
-        if(angle > angle_mappings[item].angle) {
+        float cur_error = abs(angle - angle_mappings[item].angle);
+        if(cur_error < error) {
+            error = cur_error;
+        } else {
             break;
         }
     }
 
+    if(item) {
+        item--;
+    }
+
     const angle_mapping *mapping = &angle_mappings[item];
 
-    if((angle - mapping->angle) > (2 * angle_delta)) {
+    if(error > angle_delta) {
         return false;
     }
 
